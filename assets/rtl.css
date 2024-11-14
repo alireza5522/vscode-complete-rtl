@@ -1,0 +1,20 @@
+.__rtl-lines{
+    unicode-bidi: plaintext !important;
+}
+.__rtl-lines > div.view-overlays{
+    direction: rtl !important;
+    text-align: right !important;
+}
+.__rtl-lines > div.view-overlays div{
+    direction: rtl !important;
+    text-align: right !important;
+}
+.__rtl-lines > div.view-lines > div{
+    direction: rtl !important;
+    text-align: right !important;
+}
+.__rtl-lines > div.view-lines > div span{
+    direction: rtl !important;
+    text-align: right !important;
+    unicode-bidi: plaintext;
+}

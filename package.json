@@ -1,0 +1,69 @@
+{
+  "name": "rtltextdocuments",
+  "displayName": "RTL Text Documents",
+  "description": "",
+  "version": "0.0.1",
+  "icon": "icon.png",
+  "publisher": "AlirezaKay",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alirezakay/vscode-rtl-text-documents.git"
+  },
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "extensionDependencies": [
+    "be5invis.vscode-custom-css"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onFileSystem:files",
+    "workspaceContains:**/*"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "rtltextdocuments.convertThisFileToRTL",
+        "title": "Convert This File To RTL",
+        "enablement": "rtltextdocuments.status == 'enabled'"
+      },
+      {
+        "command": "rtltextdocuments.disableRTL",
+        "title": "Disable RTL-Text-Documents Extension",
+        "enablement": "rtltextdocuments.status == 'enabled'"
+      },
+      {
+        "command": "rtltextdocuments.enableRTL",
+        "title": "Enable RTL-Text-Documents Extension",
+        "enablement": "rtltextdocuments.status == 'disabled'"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "yarn run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "yarn run compile && yarn run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.9",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.95.0",
+    "@typescript-eslint/eslint-plugin": "^8.10.0",
+    "@typescript-eslint/parser": "^8.7.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "eslint": "^9.13.0",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "tsc": "^2.0.4",
+    "vsce": "^2.15.0"
+  }
+}
