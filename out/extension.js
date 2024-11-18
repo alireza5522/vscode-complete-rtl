@@ -121,8 +121,6 @@ async function activate(context) {
         const newPositions = e.selections.map(s => s.active);
         const lastPositions = context.workspaceState.get('lastPositions') || vscode.window.activeTextEditor?.selections.map(s => s.active) || [];
         const document = vscode.window.activeTextEditor?.document;
-        console.log(lastPositions[0]);
-        console.log(newPositions[0]);
         const diffs = [];
         for (let i = 0; i < newPositions.length; i++) {
             const newPos = newPositions[i];
@@ -148,7 +146,7 @@ async function activate(context) {
                     }
                     else if (lastPos.character === document?.lineAt(lastPos.line).text.length) {
                         const newLine = lastPos.line + 1;
-                        if (newLine <= document.lineCount) {
+                        if (newLine <= (document?.lineCount || 0)) {
                             diffs.push([1, -lastPos.character]);
                         }
                         else {

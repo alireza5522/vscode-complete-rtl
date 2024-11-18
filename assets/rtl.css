@@ -1,20 +1,23 @@
-.__rtl-lines{
+.__rtl-lines {
     unicode-bidi: plaintext !important;
 }
-.__rtl-lines > div.view-overlays{
-    direction: rtl !important;
+.__rtl-lines>div.view-overlays .selected-text {
+    /* left: unset !important;
+    right: 0 !important; */
+}
+.__rtl-lines>div.view-lines>div.view-line {
+    unicode-bidi: plaintext !important;
+}
+.__rtl-lines>div.view-lines>div>span {
+    unicode-bidi: plaintext !important;
+    display: inline-block;
+    width: 100% !important;
     text-align: right !important;
 }
-.__rtl-lines > div.view-overlays div{
-    direction: rtl !important;
-    text-align: right !important;
+.__rtl-lines>div.view-lines>div>span span {
+    unicode-bidi: plaintext !important;
 }
-.__rtl-lines > div.view-lines > div{
-    direction: rtl !important;
-    text-align: right !important;
-}
-.__rtl-lines > div.view-lines > div span{
-    direction: rtl !important;
-    text-align: right !important;
-    unicode-bidi: plaintext;
+
+.__rtl-lines.__rtl-text-align-left>div.view-lines>div>span {
+    text-align: left !important;
 }

@@ -107,14 +107,12 @@ export async function activate(context: vscode.ExtensionContext) {
         return;
     }
 
-    vscode.window.onDidChangeTextEditorSelection(e => {    
-        return;    
+    vscode.window.onDidChangeTextEditorSelection(e => {
+        return;
         const newPositions = e.selections.map(s => s.active);
         const lastPositions: Array<vscode.Position> = context.workspaceState.get('lastPositions') || vscode.window.activeTextEditor?.selections.map(s => s.active) || [];
         const document: vscode.TextDocument | undefined = vscode.window.activeTextEditor?.document;
-        console.log(lastPositions[0]);
-        console.log(newPositions[0]);
-        
+
         const diffs = [];
         for (let i = 0; i < newPositions.length; i++) {
             const newPos = newPositions[i];
@@ -140,7 +138,7 @@ export async function activate(context: vscode.ExtensionContext) {
                     }
                     else if (lastPos.character === document?.lineAt(lastPos.line).text.length) {
                         const newLine = lastPos.line + 1;
-                        if (newLine <= document.lineCount) {
+                        if (newLine <= (document?.lineCount||0)) {
                             diffs.push([1, -lastPos.character]);
                         }
                         else {
