@@ -1,23 +1,32 @@
 .__rtl-lines {
-    unicode-bidi: plaintext !important;
+  unicode-bidi: plaintext !important;
 }
-.__rtl-lines>div.view-overlays .selected-text {
-    /* left: unset !important;
-    right: 0 !important; */
+.__rtl-lines > div.view-lines > div.view-line {
+  unicode-bidi: plaintext !important;
 }
-.__rtl-lines>div.view-lines>div.view-line {
-    unicode-bidi: plaintext !important;
+.__rtl-lines > div.view-lines > div > span {
+  unicode-bidi: plaintext !important;
+  display: inline-block;
+  width: 100% !important;
+  text-align: right !important;
+  direction: rtl;
 }
-.__rtl-lines>div.view-lines>div>span {
-    unicode-bidi: plaintext !important;
-    display: inline-block;
-    width: 100% !important;
-    text-align: right !important;
-}
-.__rtl-lines>div.view-lines>div>span span {
-    unicode-bidi: plaintext !important;
+.__rtl-lines > div.view-lines > div > span span {
+  unicode-bidi: plaintext;
 }
 
-.__rtl-lines.__rtl-text-align-left>div.view-lines>div>span {
-    text-align: left !important;
+.__rtl-lines.__rtl-text-align-left > div.view-lines > div > span {
+  text-align: left !important;
+  direction: ltr;
+}
+
+#__rtl-text-measurer {
+  font-family: Consolas, "Courier New", monospace;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 19px;
+  letter-spacing: 0px;
+  white-space: nowrap;
+  visibility: hidden;
+  position: absolute;
 }
