@@ -1,5 +1,4 @@
 import path from 'path';
-import fs from 'fs';
 import * as vscode from 'vscode';
 
 async function disable(context: vscode.ExtensionContext) {
@@ -14,7 +13,9 @@ async function disable(context: vscode.ExtensionContext) {
         preImportArray = preImportArray.filter(i => i !== cssFilePath && i !== jsFilePath);
 
         await vscode.workspace.getConfiguration().update("vscode_custom_css.imports", preImportArray, vscode.ConfigurationTarget.Workspace);
-        await vscode.commands.executeCommand("extension.uninstallCustomCSS");
+        await vscode.workspace.getConfiguration('editor').update("fontFamily", undefined, vscode.ConfigurationTarget.Global);
+        await vscode.commands.executeCommand("vccsilent.uninstallCustomCSS");
+        await vscode.commands.executeCommand("fixChecksums.restore");
     }
     catch (err: Error | any) {
         vscode.window.showErrorMessage(`Error while disabling the Extension: ${String(err)}`);
@@ -29,45 +30,95 @@ export async function activate(context: vscode.ExtensionContext) {
         vscode.commands.executeCommand('setContext', 'rtltextdocuments.status', 'init');
     }
 
+    const previousVersion = context.globalState.get('vscodeVersion');
+    const currentVersion = vscode.version;
+    if (previousVersion !== currentVersion) {
+        context.globalState.update('vscodeVersion', currentVersion);
+        if (previousVersion) {
+            status = 'init';
+        }
+    }
+
     if (['init', 'enabled'].includes(status)) {
-        const customStyleExt = vscode.extensions.getExtension('be5invis.vscode-custom-css');
-        const extensionId = customStyleExt?.id;
-        if (customStyleExt) {
-            await customStyleExt.activate();
+        let extensionId = 'be5invis.vscode-custom-css';
+        let otherExt = vscode.extensions.getExtension(extensionId);
+        vscode.extensions.onDidChange(async () => {
+            otherExt = vscode.extensions.getExtension(extensionId);
+            if (otherExt && !otherExt.activate) {
+                extensionId = 'alirezakay.rtltextdocuments';
+                otherExt = vscode.extensions.getExtension(extensionId);
+                await otherExt?.activate();
+            }
+        });
+        if (otherExt?.isActive) {
+            vscode.window.showErrorMessage('The extension `vscode-custom-css` is not compatible with `rtltextdocuments`. Please uninstall or disable it to proceed!\n\nRELOAD window after deactivating `vscode-custom-css` extension', { modal: true });
+            return;
+        }
+        extensionId = 'alirezakay.vscode-custom-css-silent';
+        otherExt = vscode.extensions.getExtension(extensionId);
+        if (otherExt) {
+            await otherExt.activate();
         } else {
             const installOption = 'Install Extension';
             const choice = await vscode.window.showErrorMessage(
-                'The required extension is not installed. Please install it to proceed.',
+                'The required extension `vscode-custom-css-silent` is not installed. Please install it to proceed.',
                 installOption
             );
             if (choice === installOption) {
                 vscode.env.openExternal(
-                    vscode.Uri.parse(`vscode:extension/${extensionId}`)
+                    vscode.Uri.parse(`vscode-insiders://${extensionId}`, true)
+                );
+                vscode.env.openExternal(
+                    vscode.Uri.parse(`vscode://${extensionId}`, true)
+                );
+            }
+        }
+        extensionId = 'rimuruchan.vscode-fix-checksums-next';
+        otherExt = vscode.extensions.getExtension(extensionId);
+        if (otherExt) {
+            await otherExt.activate();
+        } else {
+            const installOption = 'Install Extension';
+            const choice = await vscode.window.showErrorMessage(
+                'The required extension `vscode-fix-checksums-next` is not installed. Please install it to proceed.',
+                installOption
+            );
+            if (choice === installOption) {
+                vscode.env.openExternal(
+                    vscode.Uri.parse(`vscode-insiders://${extensionId}`, true)
+                );
+                vscode.env.openExternal(
+                    vscode.Uri.parse(`vscode://${extensionId}`, true)
                 );
             }
         }
     }
 
-    async function do_rtl() {
-        // await vscode.commands.executeCommand("workbench.action.reloadWindow");
-    }
-
-    function moveCursor(diffs: number[][]) {
-        const editor = vscode.window.activeTextEditor;
-        if (!editor) {
-            return; // Exit if no active editor
-        }
-        const currentPositions = editor.selections.map(s => s.active);
-        const newPositions = currentPositions.map((cp, idx) => cp.translate(diffs[idx][0], diffs[idx][1])); // Move by `offset` horizontally
-        console.log("<>", newPositions[0]);
-        
-        // Create a new selection with the updated cursor position
-        const newSelections = newPositions.map(newPosition => new vscode.Selection(newPosition, newPosition));
-        editor.selections = newSelections;
-    }
-
     let disposable;
+    if (status === 'enabled') {
+        const cssFilePath = vscode.Uri.file(
+            path.join(context.extensionPath, 'assets', 'rtl.css')
+        ).toString();
+        const jsFilePath = vscode.Uri.file(
+            path.join(context.extensionPath, 'assets', 'rtl.js')
+        ).toString();
+        let preImportArray: Array<string> = await vscode.workspace.getConfiguration().get("vscode_custom_css.imports") || [];
+        const importsArray = preImportArray.filter(i => [cssFilePath, jsFilePath].includes(i));
+        if (importsArray[0] && importsArray[1]) {
+            console.info("[RTL EXTENSION]::ENABLED");
+            vscode.commands.executeCommand('setContext', 'rtltextdocuments.status', 'enabled');
+            disposable = vscode.commands.registerCommand('rtltextdocuments.disableRTL', async () => {
+                await context.secrets.store("status", 'disabled');
+                await disable(context);
+            });
+            context.subscriptions.push(disposable);
+        }
+        else {
+            status = 'init';
+        }
+    }
     if (status === 'init') {
+        console.info("[RTL EXTENSION]::INIT");
         const cssFilePath = vscode.Uri.file(
             path.join(context.extensionPath, 'assets', 'rtl.css')
         ).toString();
@@ -79,148 +130,89 @@ export async function activate(context: vscode.ExtensionContext) {
         importsArray = importsArray.filter(i => !preImportArray.includes(i));
         await context.secrets.store("status", 'enabled');
         await vscode.workspace.getConfiguration().update("vscode_custom_css.imports", [...preImportArray, ...importsArray], vscode.ConfigurationTarget.Workspace);
-        await vscode.commands.executeCommand("extension.updateCustomCSS");
+        await vscode.workspace.getConfiguration('editor').update("fontFamily", "vazircode, Consolas, 'Courier New', monospace", vscode.ConfigurationTarget.Global);
+        await vscode.commands.executeCommand("vccsilent.updateCustomCSS");
+        await vscode.commands.executeCommand("fixChecksums.apply");
         return;
     }
-    else if (status === 'enabled') {
-        vscode.commands.executeCommand('setContext', 'rtltextdocuments.status', 'enabled');
-        disposable = vscode.commands.registerCommand('rtltextdocuments.convertThisFileToRTL', async () => {
-            await do_rtl();
-        });
-        context.subscriptions.push(disposable);
-        disposable = vscode.commands.registerCommand('rtltextdocuments.disableRTL', async () => {
-            await context.secrets.store("status", 'disabled');
-            await disable(context);
-        });
-        context.subscriptions.push(disposable);
-    }
     else if (status === 'disabled') {
+        console.info("[RTL EXTENSION]::DISABLED");
         vscode.commands.executeCommand('setContext', 'rtltextdocuments.status', 'disabled');
         disposable = vscode.commands.registerCommand('rtltextdocuments.enableRTL', async () => {
             await context.secrets.store("status", 'init');
-            await vscode.commands.executeCommand("extension.installCustomCSS");
+            await vscode.commands.executeCommand("vccsilent.updateCustomCSS");
+            await vscode.commands.executeCommand("fixChecksums.apply");
         });
         context.subscriptions.push(disposable);
         return;
     }
     else {
-        return;
+        if(status !== 'enabled'){
+            return;
+        }
     }
 
-    vscode.window.onDidChangeTextEditorSelection(e => {
-        return;
-        const newPositions = e.selections.map(s => s.active);
-        const lastPositions: Array<vscode.Position> = context.workspaceState.get('lastPositions') || vscode.window.activeTextEditor?.selections.map(s => s.active) || [];
-        const document: vscode.TextDocument | undefined = vscode.window.activeTextEditor?.document;
+    function isRTL(text: string = ""): boolean {
+        const rtlRegex = /^[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/;
+        return rtlRegex.test(text.trimStart());
+    }
 
-        const diffs = [];
-        for (let i = 0; i < newPositions.length; i++) {
-            const newPos = newPositions[i];
-            for (let j = 0; j < lastPositions.length; j++) {
-                const lastPos = lastPositions[j];
-                let diff = 0;
-                if (newPos.line === lastPos.line) {
-                    diff = newPos.character - lastPos.character;
-                    if (Math.abs(diff) === 2) {                        
-                        diffs.push([0, 0]);
-                        continue;
-                    }
-                    if (lastPos.character === 0) {                        
-                        const newLine = lastPos.line - 1;
-                        if (newLine > -1) {
-                            const len = document?.lineAt(newLine).text.length || 0;
-                            diffs.push([-1, len]);
+    function cursorMove(def: string, to: string, by: string = "character", select: boolean = false): any {
+        return () => {
+            const editor = vscode.window.activeTextEditor;
+            let line = editor?.selection.active.line;
+            line = line === 0 ? line : (line ? line : -1);
+            if (line > -1) {
+                const text = (editor?.document.getText().split("\n")[line]) || "";
+                if (isRTL(text[0])) {
+                    if (by === "word") {
+                        if (to === "left") {
+
+                            if (select) {
+                                vscode.commands.executeCommand("cursorWordEndLeftSelect");
+                            }
+                            else {
+                                vscode.commands.executeCommand("cursorWordEndLeft");
+                            }
                         }
-                        else {
-                            diffs.push([0, 0]);
-                            continue;
-                        }
-                    }
-                    else if (lastPos.character === document?.lineAt(lastPos.line).text.length) {
-                        const newLine = lastPos.line + 1;
-                        if (newLine <= (document?.lineCount||0)) {
-                            diffs.push([1, -lastPos.character]);
-                        }
-                        else {
-                            diffs.push([0, 0]);
-                            continue;
+                        else if (to === "right") {
+                            if (select) {
+                                vscode.commands.executeCommand("cursorWordStartRightSelect");
+                            }
+                            else {
+                                vscode.commands.executeCommand("cursorWordStartRight");
+                            }
                         }
                     }
                     else {
-                        diffs.push([0, -2 * diff]);
+                        vscode.commands.executeCommand("cursorMove", { to: to, by, select });
                     }
                 }
-                else if (Math.abs(newPos.line - lastPos.line) === 1) {
-                    diff = newPos.line - lastPos.line;
-                    // Right
-                    if (diff > 0 && newPos.character === 0) {
-                        const newChar = lastPos.character - 1;
-                        const lineLen = document?.lineAt(lastPos.line).text.length || 0;
-                        if (newChar > -1) {
-                            if (newPos.character===0){
-                                diffs.push([-1, newChar]);
-                            }
-                            else{
-                                diffs.push([0, 0]);
-                                continue;
-                            }
-                        }
-                        else {
-                            const newLine = lastPos.line - 1;
-                            if (newLine > -1) {
-                                diffs.push([-2, 0]);
-                            }
-                            else {
-                                diffs.push([0, 0]);
-                                continue;
-                            }
-                        }
-                    }
-                    // Left
-                    if (diff < 0 && lastPos.character === 0) {
-                        const newChar = lastPos.character + 1;
-                        const lineLen = document?.lineAt(lastPos.line).text.length || 0;
-                        if (newChar <= lineLen) {
-                            const newLineLen = document?.lineAt(newPos.line).text.length || 0;
-                            if (newPos.character===newLineLen){
-                                diffs.push([1, -newPos.character]);
-                            }
-                            else{
-                                diffs.push([0, 0]);
-                                continue;
-                            }
-                        }
-                        else {
-                            const newLine = lastPos.line + 1;
-                            const lineCount = document?.lineCount || 0;
-                            if (newLine <= lineCount) {
-                                diffs.push([2, 0]);
-                            }
-                            else {
-                                diffs.push([0, 0]);
-                                continue;
-                            }
-                        }
-                    }
+                else {
+                    vscode.commands.executeCommand("cursorMove", { to: def, by, select });
                 }
             }
-            context.workspaceState.update('lastPositions', newPositions);
-            moveCursor(diffs);
-        }
-    });
+        };
+    }
 
-    vscode.workspace.onDidOpenTextDocument(async (document: vscode.TextDocument) => {
-        return;
-        let text = fs.readFileSync(document.uri.fsPath).toString();
-        text = text.split("\n").map(s => `\u202B${s}\u202C`).join("\n");
-        const edit = new vscode.WorkspaceEdit();
-        edit.createFile(document.uri, {
-            contents: new TextEncoder().encode(text),
-            overwrite: true,
-            ignoreIfExists: false
-        });
-        vscode.workspace.applyEdit(edit);
-        vscode.workspace.save(document.uri);
+    const commands = [
+        // left
+        { name: "cursorLeft", callback: cursorMove("left", "right") },
+        { name: "cursorLeftSelect", callback: cursorMove("left", "right", "character", true) },
+        { name: "cursorWordLeft", callback: cursorMove("left", "right", "word") },
+        { name: "cursorWordLeftSelect", callback: cursorMove("left", "right", "word", true) },
+        { name: "cursorHome", callback: cursorMove("wrappedLineStart", "wrappedLineEnd", "wrappedLine") },
+        { name: "cursorHomeSelect", callback: cursorMove("wrappedLineStart", "wrappedLineEnd", "wrappedLine", true) },
+        // right
+        { name: "cursorRight", callback: cursorMove("right", "left") },
+        { name: "cursorRightSelect", callback: cursorMove("right", "left", "character", true) },
+        { name: "cursorWordEndRight", callback: cursorMove("right", "left", "word") },
+        { name: "cursorWordEndRightSelect", callback: cursorMove("right", "left", "word", true) },
+        { name: "cursorEnd", callback: cursorMove("wrappedLineEnd", "wrappedLineStart", "wrappedLine") },
+        { name: "cursorEndSelect", callback: cursorMove("wrappedLineEnd", "wrappedLineStart", "wrappedLine", true) },
+    ];
+    commands.forEach((cmd) => {
+        vscode.commands.registerCommand(cmd.name, cmd.callback);
     });
 }
 

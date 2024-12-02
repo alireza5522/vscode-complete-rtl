@@ -16,21 +16,15 @@
     "Other"
   ],
   "extensionDependencies": [
-    "be5invis.vscode-custom-css"
+    "alirezakay.vscode-custom-css-silent",
+    "rimuruchan.vscode-fix-checksums-next"
   ],
   "activationEvents": [
-    "onStartupFinished",
-    "onFileSystem:files",
-    "workspaceContains:**/*"
+    "*"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
-      {
-        "command": "rtltextdocuments.convertThisFileToRTL",
-        "title": "Convert This File To RTL",
-        "enablement": "rtltextdocuments.status == 'enabled'"
-      },
       {
         "command": "rtltextdocuments.disableRTL",
         "title": "Disable RTL-Text-Documents Extension",
