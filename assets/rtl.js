@@ -1,3 +1,5 @@
+const NBSPACE = " ";
+
 function isRtlCharacter(char) {
     const rtlRegex = /[\u0590-\u05FF\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\u1EE0-\u1EEF]/;
     return rtlRegex.test(char);
@@ -5,10 +7,9 @@ function isRtlCharacter(char) {
 
 function isEmoji(char) {
     const emojiRegex = /[\p{Emoji}]/u;
-  return emojiRegex.test(char);
+    return emojiRegex.test(char);
 }
 
-const NBSPACE = " ";
 
 function getSubstringWidthInContext(fullText, partText) {
     const container = document.getElementById("__rtl-text-measurer");
@@ -38,19 +39,19 @@ const runner = async (flags = []) => {
         if (flags[i]) {
             const editor_el = document.querySelector("div.monaco-workbench .editor div.content");
             const content_el = document.querySelectorAll("div.monaco-workbench .editor div.content [class*='-container'] .lines-content")[i];
-            const container_el = document.querySelectorAll("div.monaco-workbench .editor div.content .editor-container")[i];
-            const editor_instance_el = document.querySelectorAll("div.monaco-workbench .editor div.content .editor-container .editor-instance")[i];
-            const monaco_el = document.querySelectorAll("div.monaco-workbench .editor div.content .monaco-editor")[i];
-            const overflow_el = document.querySelectorAll("div.monaco-workbench .editor div.content .overflow-guard")[i];
-            const editor_scrollable_el = document.querySelectorAll("div.monaco-workbench .editor div.content [class*='-container'] .editor-scrollable")[i];
-            const minimap = document.querySelectorAll(".minimap")[i];
-            const minimap_shadow = document.querySelectorAll(".minimap-shadow-visible")[i];
-            const minimap_layer = document.querySelectorAll(".minimap-decorations-layer")[i];
-            const horiz_scroller = document.querySelectorAll("div.monaco-workbench .editor div.content [class*='-container'] .editor-scrollable .scrollbar.horizontal")[i];
-            const vert_scroller = document.querySelectorAll("div.monaco-workbench .editor div.content [class*='-container'] .editor-scrollable .scrollbar.vertical")[i];
-            const vert_scroller_canvas = document.querySelectorAll("div.monaco-workbench .editor div.content [class*='-container'] .editor-scrollable .decorationsOverviewRuler")[i];
-            const scrollbar = document.querySelectorAll(".invisible.scrollbar.vertical")[0];
-            const numberbar = editor_el.querySelectorAll(".margin")[i * 2 + 1];
+            // const container_el = document.querySelectorAll("div.monaco-workbench .editor div.content .editor-container")[i];
+            // const editor_instance_el = document.querySelectorAll("div.monaco-workbench .editor div.content .editor-container .editor-instance")[i];
+            // const monaco_el = document.querySelectorAll("div.monaco-workbench .editor div.content .monaco-editor")[i];
+            // const overflow_el = document.querySelectorAll("div.monaco-workbench .editor div.content .overflow-guard")[i];
+            // const editor_scrollable_el = document.querySelectorAll("div.monaco-workbench .editor div.content [class*='-container'] .editor-scrollable")[i];
+            // const minimap = document.querySelectorAll(".minimap")[i];
+            // const minimap_shadow = document.querySelectorAll(".minimap-shadow-visible")[i];
+            // const minimap_layer = document.querySelectorAll(".minimap-decorations-layer")[i];
+            // const horiz_scroller = document.querySelectorAll("div.monaco-workbench .editor div.content [class*='-container'] .editor-scrollable .scrollbar.horizontal")[i];
+            // const vert_scroller = document.querySelectorAll("div.monaco-workbench .editor div.content [class*='-container'] .editor-scrollable .scrollbar.vertical")[i];
+            // const vert_scroller_canvas = document.querySelectorAll("div.monaco-workbench .editor div.content [class*='-container'] .editor-scrollable .decorationsOverviewRuler")[i];
+            // const scrollbar = document.querySelectorAll(".invisible.scrollbar.vertical")[0];
+            // const numberbar = editor_el.querySelectorAll(".margin")[i * 2 + 1];
             const lines_el = content_el.querySelector(".view-lines");
             const overlays_el = content_el.querySelector(".view-overlays");
 
@@ -101,19 +102,19 @@ const runner = async (flags = []) => {
                             return;
                         }
                         clearInterval(interval);
-                        const overlay_el = Array.from(overlay_els).filter((el) => el.style.top === line_el.style.top)[0];
+                        // const overlay_el = Array.from(overlay_els).filter((el) => el.style.top === line_el.style.top)[0];
                         const span = pspan.getElementsByTagName('span').item(0);
                         const rtl = Array.from(span.innerText.trim()).reduce((prev, c) => {
-                            if(prev===null){
-                                if(isEmoji(c) || c===NBSPACE){
+                            if (prev === null) {
+                                if (isEmoji(c) || c === NBSPACE) {
                                     return null;
                                 }
-                                else{
+                                else {
                                     return isRtlCharacter(c);
                                 }
                             }
                             return prev;
-                        }, null);                        
+                        }, null);
                         if (rtl) {
                             pspan.style.textAlign = "right";
                             pspan.style.textAlignLast = "right";
@@ -181,16 +182,16 @@ const doer = async (init = false) => {
                     const curr_overlay_el = Array.from(overlay_els).filter((el) => el.firstElementChild && String(el.firstElementChild.className).includes("current-line"))[0];
                     const line_el = Array.from(line_els).filter((el) => el.style.top === curr_overlay_el.style.top)[0];
                     const rtl = Array.from(String(line_el.getElementsByTagName("span").item(0).innerText.trim())).reduce((prev, c) => {
-                        if(prev===null){
-                            if(isEmoji(c) || c===NBSPACE){
+                        if (prev === null) {
+                            if (isEmoji(c) || c === NBSPACE) {
                                 return null;
                             }
-                            else{
+                            else {
                                 return isRtlCharacter(c);
                             }
                         }
                         return prev;
-                    }, null);  
+                    }, null);
                     if (!rtl) {
                         if (!String(content_els[idx].className).includes("__rtl-lines-normal")) {
                             content_els[idx].className += " __rtl-lines-normal";
@@ -234,7 +235,7 @@ const doer = async (init = false) => {
             }
             idx++;
         }
-        const timeout = init ? 25 : 3;
+        const timeout = init ? 17 : 3;
         await runner_distint(flags = flags, timeout);
     }, 1);
 };
