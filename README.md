@@ -49,10 +49,14 @@ So if this is the case, we ain't gonna sit and pray for changes from them!!! Let
 
 ## Installation & Setup
 
-1. Install the [alirezakay.vscode-custom-css-silent](https://marketplace.visualstudio.com/items?itemName=alirezakay.vscode-custom-css-silent) extension.
+1. Install the [alirezakay.vscode-custom-css-silent](https://marketplace.visualstudio.com/items?itemName=alirezakay.vscode-custom-css-silent) extension. Note that this is the forked version of the original `vscode-custom-css` extension. So be aware to install the correct one!
 2. Install the **RTL Text Documents** extension.
 3. Restart or reload your VSCode window to apply changes.
 4. For additional VSCode windows, reload them manually to enable RTL support.
+
+After installing/enabling, this extension will inject a ***sparkle icon*** at the bottom bar of vscode windows. So if you see it, it mean so far so good! It's been enabled successfully. Also after uninstalling/disabling, it'll disappear again.
+
+![screen-shot](ss1.png)
 
 ---
 
@@ -77,11 +81,20 @@ Access these commands from the Command Palette:
 
 Whenever you had problems with the extension to be taken effect, just use the re-initialize command and then reload all windows. It'll most likely make everything all right again!
 
+Otherwise, do not worry! If things went wrong, just **RE-INSTALL** the vscode itself; close all vscode windows, run the vscode installation program and proceed the process to reinstall it. This will fix the vscode core just like it was at first!
+
 ---
 
 ## Uninstallation
 - Disable or uninstall via the Extensions view in VSCode.
 - Alternatively, use the commands provided by the `alirezakay.vscode-custom-css-silent` extension to manage injected files.
+
+
+### IMPORTANT NOTE
+
+**If you want to restore the default vscode core, you have to `disable` this extension using the command palette: 'Disable RTL Text Documents' and then uninstall/disable it!**
+
+You may **close all vscode windows and re-open them** after uninstalling/disabling the extension so as to the integrity warning alert to disappear!
 
 ---
 
