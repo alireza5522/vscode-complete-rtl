@@ -18,7 +18,7 @@ There can be still way more improvements to this extension, that can be implemen
 - The option for having the ability of not changing the vscode `wordWrap` settings field (having unlimited horizontal scroll)
 - The ability for the integrity check to be disabled without the need of closing and re-opening all vscode windows (this one needs finding and manipulating more APIs of vsocde code-bases)
 
-Current version of this extension has been the most stable and easy-to-use version of RTL support as VScode **does not** provide any good API for developers! It sucks I know! It's been more than 6 years that they know about this RTL-thing issues and they did nothing for it! Literally NOTHING!
+Current version of this extension has been the most stable and easy-to-use version of RTL support as VScode **does not** provide any good API for developers! It sucks I know! It's been more than 6 years they've know about this RTL-thing issues and they did nothing for it! Literally NOTHING!
 
 So if this is the case, we ain't gonna sit and pray for changes from them!!! Let's make VScode great for all people. I need your support for this task 🙂
 
@@ -56,7 +56,7 @@ So if this is the case, we ain't gonna sit and pray for changes from them!!! Let
 3. Restart or reload your VSCode window to apply changes.
 4. For additional VSCode windows, reload them manually to enable RTL support.
 
-After installing/enabling, this extension will inject a ***sparkle icon*** at the bottom bar of vscode windows. So if you see it, it mean so far so good! It's been enabled successfully. Also after uninstalling/disabling, it'll disappear again.
+After installing/enabling, this extension will inject a ***sparkle icon*** at the bottom bar of vscode windows. So if you see it, it means, so far so good! It's been enabled successfully. Also after uninstalling/disabling, it'll disappear again.
 
 ![screen-shot](ss1.png)
 
@@ -81,7 +81,7 @@ Access these commands from the Command Palette:
 - **Enable RTL Text Documents**: Reactivates the extension if previously disabled.
 - **Re-initialize RTL Text Documents**: Reloads the extension and reapplies settings.
 
-**Whenever you had problems with the extension to be taken effect, just use the `re-initialize` command *and/or* reload all windows. It'll most likely make everything all right again!** 👈🏻
+⚠️ **Whenever you had problems with the extension to be taken effect, just use the `re-initialize` command *and/or* reload all windows. It'll most likely make everything all right again!** 👈🏻
 
 Otherwise, do not worry! If things went wrong, just **RE-INSTALL** the vscode itself; close all vscode windows, run the vscode installation program and proceed the process to reinstall it. This will fix the vscode core just like it was at first!
 
