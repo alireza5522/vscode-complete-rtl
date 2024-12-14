@@ -1,71 +1,92 @@
-# rtltextdocuments README
+# RTL Text Documents Extension for VSCode
 
-This is the README for your extension "rtltextdocuments". After writing up a brief description, we recommend including the following sections.
+## Overview
 
-## Features
+The **RTL Text Documents** extension enhances VSCode's support for right-to-left (RTL) languages like Persian and Arabic. By injecting custom CSS and JavaScript into the core of VSCode (via the dependent extension [alirezakay.vscode-custom-css-silent](https://marketplace.visualstudio.com/items?itemName=alirezakay.vscode-custom-css-silent)), this extension provides a more convenient environment for working with RTL-based text documents.
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+> **Note**: This extension modifies core VSCode files, which may raise integrity warnings. Use it at your own discretion.
 
 ---
 
-## Following extension guidelines
+## Improvements
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+There can be still way more improvements to this extension, that can be implemented in the near future by your help! YES, you've just heard it right. You can help by going to the github repo and pull requests or open issues.
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+- The option for making all files become rtl-supported (not just those with `rtl` prefix)
+- The option for having the ability of not changing the vscode `wordWrap` settings field (having unlimited horizontal scroll)
+- The ability for the integrity check to be disabled without the need of closing and re-opening all vscode windows (this one needs finding and manipulating more APIs of vsocde code-bases)
 
-## Working with Markdown
+Current version of this extension has been the most stable and easy-to-use version of RTL support as VScode **does not** provide any good API for developers! It sucks I know! It's been more than 6 years that they know about this RTL-thing issues and they did nothing for it! Literally NOTHING!
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+So if this is the case, we ain't gonna sit and pray for changes from them!!! Let's make VScode great for all people. I need your support for this task 🙂
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+---
 
-## For more information
+## Features
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+1. **RTL Support**:
+   - Applies only to files with `rtl` in the filename before the extension (e.g., `example.rtl.txt`).
+   - Automatically adjusts:
+     - `editor.fontFamily` to:
+       ```
+       "unikode, Consolas, 'Courier New', monospace"
+       ```
+     - `editor.wordWrap` to `on` for improved readability.
 
-**Enjoy!**
+2. **Seamless Integration**:
+   - Automatically reloads the VSCode window after installation and enables RTL settings immediately.
+   - Customized notification system alerts you about core file changes.
+
+3. **Easy Control**:
+   - Enable or disable the extension via:
+     - Command Palette (`Disable RTL Text Documents`).
+     - Extension manager in VSCode.
+
+4. **Dependency Management**:
+   - Requires the installation of [alirezakay.vscode-custom-css-silent](https://marketplace.visualstudio.com/items?itemName=alirezakay.vscode-custom-css-silent). If not installed, you will be prompted with an error message.
+
+---
+
+## Installation & Setup
+
+1. Install the [alirezakay.vscode-custom-css-silent](https://marketplace.visualstudio.com/items?itemName=alirezakay.vscode-custom-css-silent) extension.
+2. Install the **RTL Text Documents** extension.
+3. Restart or reload your VSCode window to apply changes.
+4. For additional VSCode windows, reload them manually to enable RTL support.
+
+---
+
+## Notifications & Warnings
+
+- After enabling the extension, you will see a notification about core file changes.
+- To disable future warnings:
+  1. Close **all** VSCode windows.
+  2. Re-open VSCode to restore the file integrity checksum.
+
+> **Important**: Modifying VSCode core files may impact its security or stability. Proceed with caution.
+
+---
+
+## Commands
+
+Access these commands from the Command Palette:
+
+- **Disable RTL Text Documents**: Deactivates the extension.
+- **Enable RTL Text Documents**: Reactivates the extension if previously disabled.
+- **Re-initialize RTL Text Documents**: Reloads the extension and reapplies settings.
+
+Whenever you had problems with the extension to be taken effect, just use the re-initialize command and then reload all windows. It'll most likely make everything all right again!
+
+---
+
+## Uninstallation
+- Disable or uninstall via the Extensions view in VSCode.
+- Alternatively, use the commands provided by the `alirezakay.vscode-custom-css-silent` extension to manage injected files.
+
+---
+
+## License
+This extension is open-source and available on [GitHub](https://github.com/alirezakay/vscode-rtl-text-documents).
+
+For any issues, feel free to open an issue or contribute!
+

@@ -2,7 +2,7 @@
   "name": "rtltextdocuments",
   "displayName": "RTL Text Documents",
   "description": "",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "icon": "icon.png",
   "publisher": "AlirezaKay",
   "repository": {
@@ -16,8 +16,7 @@
     "Other"
   ],
   "extensionDependencies": [
-    "alirezakay.vscode-custom-css-silent",
-    "rimuruchan.vscode-fix-checksums-next"
+    "alirezakay.vscode-custom-css-silent"
   ],
   "activationEvents": [
     "*"
@@ -28,6 +27,11 @@
       {
         "command": "rtltextdocuments.disableRTL",
         "title": "Disable RTL-Text-Documents Extension",
+        "enablement": "rtltextdocuments.status == 'enabled'"
+      },
+      {
+        "command": "rtltextdocuments.reInitializeRTL",
+        "title": "Re-initialize RTL-Text-Documents Extension",
         "enablement": "rtltextdocuments.status == 'enabled'"
       },
       {
