@@ -55,7 +55,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     let disposable;
     if (status === 'enabled') {
-        const vccsilentStatus = await vscode.commands.executeCommand('vccsilent.getStatus');        
+        const vccsilentStatus = await vscode.commands.executeCommand('vccsilent.getStatus');
         if (vccsilentStatus === "disabled") {
             vscode.window.showWarningMessage(`The 'vscode-custom-css-silent' got disabled internally; rtl-text-document is now being disabled as well! You can re-enable it using the command palette: 'Enable RTL-Text-Documents Extension'`);
             await context.secrets.store('status', 'disabled');

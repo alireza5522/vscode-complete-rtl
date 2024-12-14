@@ -26,17 +26,16 @@
     "commands": [
       {
         "command": "rtltextdocuments.disableRTL",
-        "title": "Disable RTL-Text-Documents Extension",
+        "title": "Disable [RTL-Text-Documents] Extension",
         "enablement": "rtltextdocuments.status == 'enabled'"
       },
       {
         "command": "rtltextdocuments.reInitializeRTL",
-        "title": "Re-initialize RTL-Text-Documents Extension",
-        "enablement": "rtltextdocuments.status == 'enabled'"
+        "title": "Re-initialize [RTL-Text-Documents] Extension"
       },
       {
         "command": "rtltextdocuments.enableRTL",
-        "title": "Enable RTL-Text-Documents Extension",
+        "title": "Enable [RTL-Text-Documents] Extension",
         "enablement": "rtltextdocuments.status == 'disabled'"
       }
     ]

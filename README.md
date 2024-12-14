@@ -1,5 +1,7 @@
 # RTL Text Documents Extension for VSCode
 
+![screen-shot](ss0.png)
+
 ## Overview
 
 The **RTL Text Documents** extension enhances VSCode's support for right-to-left (RTL) languages like Persian and Arabic. By injecting custom CSS and JavaScript into the core of VSCode (via the dependent extension [alirezakay.vscode-custom-css-silent](https://marketplace.visualstudio.com/items?itemName=alirezakay.vscode-custom-css-silent)), this extension provides a more convenient environment for working with RTL-based text documents.
