@@ -81,7 +81,7 @@ Access these commands from the Command Palette:
 - **Enable RTL Text Documents**: Reactivates the extension if previously disabled.
 - **Re-initialize RTL Text Documents**: Reloads the extension and reapplies settings.
 
-Whenever you had problems with the extension to be taken effect, just use the re-initialize command and then reload all windows. It'll most likely make everything all right again!
+**Whenever you had problems with the extension to be taken effect, just use the `re-initialize` command *and/or* reload all windows. It'll most likely make everything all right again!** 👈🏻
 
 Otherwise, do not worry! If things went wrong, just **RE-INSTALL** the vscode itself; close all vscode windows, run the vscode installation program and proceed the process to reinstall it. This will fix the vscode core just like it was at first!
 
