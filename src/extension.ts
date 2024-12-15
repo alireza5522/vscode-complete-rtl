@@ -16,6 +16,7 @@ async function disable(context: vscode.ExtensionContext) {
         preImportArray = preImportArray.filter(i => i !== cssFilePath && i !== jsFilePath && i !== fontFilePath);
 
         await vscode.workspace.getConfiguration().update("vscode_custom_css_silent.imports", preImportArray, vscode.ConfigurationTarget.Global);
+        await vscode.workspace.getConfiguration().update("vscode_custom_css_silent.imports", preImportArray, vscode.ConfigurationTarget.Workspace);
         await vscode.workspace.getConfiguration('editor').update("fontFamily", undefined, vscode.ConfigurationTarget.Global);
         await vscode.commands.executeCommand("vccsilent.uninstallCustomCSS");
     }
@@ -25,7 +26,7 @@ async function disable(context: vscode.ExtensionContext) {
 }
 
 export async function activate(context: vscode.ExtensionContext) {
-    let status: string = await context.secrets.get('status') || "";
+    let status: string = await context.secrets.get('status') || "";    
     if (!status || !['init', 'enabled', 'disabled'].includes(status)) {
         await context.secrets.store('status', 'init');
         status = 'init';
@@ -55,8 +56,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
     let disposable;
     if (status === 'enabled') {
+        
         const vccsilentStatus = await vscode.commands.executeCommand('vccsilent.getStatus');
-        if (vccsilentStatus === "disabled") {
+        if (vccsilentStatus === "disabled") {            
             vscode.window.showWarningMessage(`The 'vscode-custom-css-silent' got disabled internally; rtl-text-document is now being disabled as well! You can re-enable it using the command palette: 'Enable RTL-Text-Documents Extension'`);
             await context.secrets.store('status', 'disabled');
             status = 'disabled';
@@ -73,8 +75,8 @@ export async function activate(context: vscode.ExtensionContext) {
         const jsFilePath = vscode.Uri.file(
             path.join(context.extensionPath, 'assets', 'rtl.js')
         ).toString();
-        let preImportArray: Array<string> = await vscode.workspace.getConfiguration().get("vscode_custom_css_silent.imports") || [];
-        const importsArray = preImportArray.filter(i => [fontFilePath, cssFilePath, jsFilePath].includes(i));
+        let preImportArray: Array<string> = await vscode.workspace.getConfiguration("vscode_custom_css_silent").get("imports") || [];
+        const importsArray = preImportArray.filter(i => [fontFilePath, cssFilePath, jsFilePath].includes(i));        
         if (importsArray[0] && importsArray[1] && importsArray[2]) {
             console.info("[RTL EXTENSION]::ENABLED");
             await vscode.workspace.getConfiguration('editor').update("wordWrap", "on", vscode.ConfigurationTarget.Global);
@@ -99,6 +101,8 @@ export async function activate(context: vscode.ExtensionContext) {
             await context.secrets.store('status', 'init');
             status = 'init';
             await vscode.commands.executeCommand('setContext', 'rtltextdocuments.status', 'init');
+            await activate(context);
+            return;
         }
     }
     if (status === 'init') {
@@ -118,6 +122,7 @@ export async function activate(context: vscode.ExtensionContext) {
         importsArray = importsArray.filter(i => !preImportArray.includes(i));
         await context.secrets.store("status", 'enabled');
         await vscode.workspace.getConfiguration().update("vscode_custom_css_silent.imports", [...preImportArray, ...importsArray], vscode.ConfigurationTarget.Global);
+        await vscode.workspace.getConfiguration().update("vscode_custom_css_silent.imports", [...preImportArray, ...importsArray], vscode.ConfigurationTarget.Workspace);
         await vscode.workspace.getConfiguration('editor').update("fontFamily", "unikode, Consolas, 'Courier New', monospace", vscode.ConfigurationTarget.Global);
         await vscode.commands.executeCommand("vccsilent.updateCustomCSS");
         return;
