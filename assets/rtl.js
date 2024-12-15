@@ -158,8 +158,8 @@ const runner_distint = async (flag = null, timeout = 50) => {
 };
 
 let initEventCounter = 0;
-let resizeObserver;
-let mutationObserver;
+let resizeObservers = [];
+let mutationObservers = [];
 const doer = async (init = false) => {
     const interval = setInterval(async () => {
         const content_els = document.querySelectorAll("div.monaco-workbench .editor div.content [class*='-container'] .lines-content");
@@ -169,7 +169,7 @@ const doer = async (init = false) => {
         clearInterval(interval);
         const name_els = document.querySelectorAll("div.monaco-workbench .editor div.content [class*='-container'] .tabs .tabs-container .tab.active");
         let flags = [];
-        let idx = 0;
+        let idx = 0;        
         for (let el of name_els) {
             if (/(\w+)\.rtl\.(\w+)$/g.test(el.textContent.trim())) {
                 content_els[idx].className = String(content_els[idx].className).replace(" __rtl-lines", "");
@@ -210,6 +210,7 @@ const doer = async (init = false) => {
                             await doer(init = false);
                         });
                     }
+                    let resizeObserver = resizeObservers[idx];
                     if (resizeObserver) {
                         resizeObserver.disconnect();
                     }
@@ -218,16 +219,25 @@ const doer = async (init = false) => {
                     });
                     let element = document.querySelectorAll("div.monaco-workbench .editor div.content [class*='-container'] .monaco-editor")[idx];
                     resizeObserver.observe(element);
+                    resizeObservers[idx] = resizeObserver;
+                    let mutationObserver = mutationObservers[idx];
                     if (mutationObserver) {
                         mutationObserver.disconnect();
                     }
                     mutationObserver = new MutationObserver(async (entries) => {
                         await doer(init = false);
                     });
+                    // Editor Overlays
                     element = document.querySelectorAll("div.monaco-workbench .editor div.content [class*='-container'] .lines-content .view-overlays")[idx];
-                    mutationObserver.observe(element, { subtree: true, childList: true, characterData: true });
+                    try {
+                        mutationObserver.observe(element, { subtree: true, childList: true, characterData: true });
+                    } catch { }
+                    // Editor Lines
                     element = document.querySelectorAll("div.monaco-workbench .editor div.content [class*='-container'] .lines-content .view-lines")[idx];
-                    mutationObserver.observe(element, { subtree: true, childList: true, characterData: true });
+                    try {
+                        mutationObserver.observe(element, { subtree: true, childList: true, characterData: true });
+                    } catch { }
+                    mutationObservers[idx] = mutationObserver;
                 }
             }
             else {
@@ -235,7 +245,7 @@ const doer = async (init = false) => {
             }
             idx++;
         }
-        const timeout = init ? 17 : 3;
+        const timeout = init ? 23 : 2;
         await runner_distint(flags = flags, timeout);
     }, 1);
 };
@@ -254,16 +264,25 @@ document.addEventListener('DOMContentLoaded', async (e) => {
             editor_content = (el = document.getElementById("workbench.parts.editor")) && el.querySelector("div.content");
             rate_limit++;
         } while (!editor_content);
-        const mutationObserver = new MutationObserver(async (entries) => {
+        let mutationObserver = new MutationObserver(async (entries) => {
             editor_content = document.getElementById("workbench.parts.editor").querySelector("div.content");
             if (editor_content && !editor_content.className.includes("empty")) {
-                console.log("[RTL EXTENSION] >> init");
+                // console.log("[RTL EXTENSION] >> init");
                 await doer(init = true);
             }
         });
         mutationObserver.observe(editor_content, { attributeFilter: ["class"] });
-        const name_els = document.querySelectorAll("div.monaco-workbench .editor div.content [class*='-container'] .tabs .tabs-container .tab.active");
-        name_els.forEach(name_el => name_el && mutationObserver.observe(name_el, { attributes: true }));
+        // Tabs
+        let elements = document.querySelectorAll("div.monaco-workbench .editor div.content [class*='-container'] .tabs-container");
+        try{
+            elements.forEach(el => el && mutationObserver.observe(el, { subtree: true, childList: true, attributes: true }));
+        } catch {}
+        // Dividers
+        elements = document.querySelectorAll("div.monaco-workbench .editor div.content [class*='-container'] .monaco-sash");
+        try{
+            elements.forEach(el => el && mutationObserver.observe(el, { subtree: true, childList: true, attributes: true }));
+        } catch {}
+
         await doer(init = true);
     }
 
