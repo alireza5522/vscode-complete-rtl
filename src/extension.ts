@@ -15,7 +15,7 @@ async function disable(context: vscode.ExtensionContext) {
         let preImportArray: Array<string> = await vscode.workspace.getConfiguration().get("vscode_custom_css_silent.imports") || [];
         preImportArray = preImportArray.filter(i => i !== cssFilePath && i !== jsFilePath && i !== fontFilePath);
 
-        await vscode.workspace.getConfiguration().update("vscode_custom_css_silent.imports", preImportArray, vscode.ConfigurationTarget.Workspace);
+        await vscode.workspace.getConfiguration().update("vscode_custom_css_silent.imports", preImportArray, vscode.ConfigurationTarget.Global);
         await vscode.workspace.getConfiguration('editor').update("fontFamily", undefined, vscode.ConfigurationTarget.Global);
         await vscode.commands.executeCommand("vccsilent.uninstallCustomCSS");
     }
@@ -117,7 +117,7 @@ export async function activate(context: vscode.ExtensionContext) {
         let preImportArray: Array<string> = await vscode.workspace.getConfiguration().get("vscode_custom_css_silent.imports") || [];
         importsArray = importsArray.filter(i => !preImportArray.includes(i));
         await context.secrets.store("status", 'enabled');
-        await vscode.workspace.getConfiguration().update("vscode_custom_css_silent.imports", [...preImportArray, ...importsArray], vscode.ConfigurationTarget.Workspace);
+        await vscode.workspace.getConfiguration().update("vscode_custom_css_silent.imports", [...preImportArray, ...importsArray], vscode.ConfigurationTarget.Global);
         await vscode.workspace.getConfiguration('editor').update("fontFamily", "unikode, Consolas, 'Courier New', monospace", vscode.ConfigurationTarget.Global);
         await vscode.commands.executeCommand("vccsilent.updateCustomCSS");
         return;
