@@ -1,8 +1,8 @@
 const NBSPACE = " ";
 
 function isRtlCharacter(char) {
-    const rtlRegex = /[\u0590-\u05FF\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\u1EE0-\u1EEF]/;
-    return rtlRegex.test(char);
+    return true;
+
 }
 
 function isEmoji(char) {

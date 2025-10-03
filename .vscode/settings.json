@@ -11,6 +11,9 @@
 	"vscode_custom_css_silent.imports": [
 		"file:///c%3A/Users/USER/.vscode-insiders/extensions/alirezakay.rtltextdocuments-0.1.0/assets/cascadia.css",
 		"file:///c%3A/Users/USER/.vscode-insiders/extensions/alirezakay.rtltextdocuments-0.1.0/assets/rtl.css",
-		"file:///c%3A/Users/USER/.vscode-insiders/extensions/alirezakay.rtltextdocuments-0.1.0/assets/rtl.js"
+		"file:///c%3A/Users/USER/.vscode-insiders/extensions/alirezakay.rtltextdocuments-0.1.0/assets/rtl.js",
+		"file:///c%3A/Users/sepanta/.vscode/extensions/alirezakay.rtltextdocuments-0.1.0/assets/cascadia.css",
+		"file:///c%3A/Users/sepanta/.vscode/extensions/alirezakay.rtltextdocuments-0.1.0/assets/rtl.css",
+		"file:///c%3A/Users/sepanta/.vscode/extensions/alirezakay.rtltextdocuments-0.1.0/assets/rtl.js"
 	]
 }
